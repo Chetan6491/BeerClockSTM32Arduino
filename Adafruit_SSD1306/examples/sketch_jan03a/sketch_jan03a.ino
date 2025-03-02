@@ -10,6 +10,8 @@
 #define SWITCH_PIN PB12  // Toggle switch connected to PB12
 
 int switchState = 0;
+int button_state = HIGH;       // Current state of the switch
+int debounced_state = HIGH;    // Last stable state of the switch
 
 // Initialize the OLED display object
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
@@ -59,5 +61,27 @@ void loop() {
   digitalWrite(LED_PIN, HIGH); // Turn LED on
   delay(1000);                 // Wait 1 second
   digitalWrite(LED_PIN, LOW);  // Turn LED off
+
+  debounce(); //Read the switch
+}
+
+
+
+void debounce() {
+  button_state = digitalRead(SWITCH_PIN); // Read switch state
+  if (button_state != debounced_state) {
+      delay(100); // Wait for debounce time
+      button_state = digitalRead(SWITCH_PIN); // Read again
   
+    if (button_state == debounced_state) {
+        debounced_state = button_state; // Update stable state
+     }
+  }
+  Serial.print("Button State : ");
+  Serial.print(button_state);
+  Serial.print("\n");
+  Serial.print("Debounced State : ");
+  Serial.print(debounced_state);
+  Serial.print("\n");
+
 }
